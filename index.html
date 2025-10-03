@@ -15,14 +15,14 @@
         .tab-content.active {
             display: block;
         }
-        .user-color-1 { background-color: #A5B4FC; }
-        .user-color-2 { background-color: #FCA5A5; }
-        .user-color-3 { background-color: #86EFAC; }
-        .user-color-4 { background-color: #FDE68A; }
-        .user-color-5 { background-color: #C4B5FD; }
+        .user-color-1 { background-color: #E0E7FF; color: #4338CA; }
+        .user-color-2 { background-color: #FCE7F3; color: #BE185D; }
+        .user-color-3 { background-color: #ECFDF5; color: #059669; }
+        .user-color-4 { background-color: #FEF3C7; color: #D97706; }
+        .user-color-5 { background-color: #F3E8FF; color: #7C3AED; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+<body class="bg-gradient-to-br from-rose-50 to-pink-100 min-h-screen">
     <div class="container mx-auto px-4 py-6 max-w-6xl">
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -32,32 +32,56 @@
             <div class="flex flex-wrap gap-2 mb-4">
                 <span class="text-sm font-medium text-gray-600 mr-2">Aktiv bruker:</span>
                 <div id="userButtons" class="flex flex-wrap gap-2">
-                    <button class="user-btn px-3 py-1 rounded-full text-white text-sm font-medium user-color-1" style="opacity: 1; transform: scale(1.05);" onclick="activeUser = 0; updateUserButtons();">Mamma</button>
-                    <button class="user-btn px-3 py-1 rounded-full text-white text-sm font-medium user-color-2" style="opacity: 0.7;" onclick="activeUser = 1; updateUserButtons();">Pappa</button>
-                    <button class="user-btn px-3 py-1 rounded-full text-white text-sm font-medium user-color-3" style="opacity: 0.7;" onclick="activeUser = 2; updateUserButtons();">Emma</button>
-                    <button class="user-btn px-3 py-1 rounded-full text-white text-sm font-medium user-color-4" style="opacity: 0.7;" onclick="activeUser = 3; updateUserButtons();">Noah</button>
+                    <!-- User buttons will be generated here -->
                 </div>
                 <button onclick="addNewUser()" class="px-3 py-1 border-2 border-dashed border-gray-300 rounded-full text-gray-600 text-sm hover:border-gray-400">+ Legg til</button>
+            </div>
+            
+            <div class="text-xs text-gray-500 mb-4">
+                💡 <strong>Tips:</strong> Dobbeltklikk på navn for å endre • Nye brukere får ❌ for sletting
             </div>
 
             <!-- Navigation Tabs -->
             <div class="flex flex-wrap gap-2">
-                <button onclick="showTab('handleliste')" class="tab-btn px-4 py-2 rounded-lg bg-blue-400 text-white font-medium">Handleliste</button>
+                <button onclick="showTab('ukeoversikt')" class="tab-btn px-4 py-2 rounded-lg bg-rose-300 text-white font-medium">Ukeoversikt</button>
+                <button onclick="showTab('handleliste')" class="tab-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300">Handleliste</button>
                 <button onclick="showTab('ukesmeny')" class="tab-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300">Middagsmeny</button>
+                <button onclick="showTab('middagsforslag')" class="tab-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300">Middagsforslag</button>
                 <button onclick="showTab('arbeidsoppgaver')" class="tab-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300">Arbeidsoppgaver</button>
                 <button onclick="showTab('aarshjul')" class="tab-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300">Årshjul</button>
                 <button onclick="showTab('aktiviteter')" class="tab-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300">Aktiviteter</button>
             </div>
         </div>
 
+        <!-- Ukeoversikt Tab -->
+        <div id="ukeoversikt" class="tab-content active">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Ukeoversikt</h2>
+                    <div class="flex gap-2">
+                        <button onclick="changeWeek(-1)" class="px-3 py-1 bg-rose-200 text-rose-800 rounded-lg hover:bg-rose-300">← Forrige uke</button>
+                        <button onclick="changeWeek(1)" class="px-3 py-1 bg-rose-200 text-rose-800 rounded-lg hover:bg-rose-300">Neste uke →</button>
+                    </div>
+                </div>
+                
+                <div class="mb-4 text-center">
+                    <h3 id="weekTitle" class="text-lg font-semibold text-gray-700"></h3>
+                </div>
+
+                <div id="weekOverview" class="space-y-6">
+                    <!-- Week overview will be generated here -->
+                </div>
+            </div>
+        </div>
+
         <!-- Handleliste Tab -->
-        <div id="handleliste" class="tab-content active">
+        <div id="handleliste" class="tab-content">
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Handleliste</h2>
                 
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="newShoppingItem" placeholder="Legg til vare..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" onkeypress="if(event.key==='Enter') addShoppingItem()">
-                    <button onclick="addShoppingItem()" class="px-6 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 font-medium">Legg til</button>
+                    <button onclick="addShoppingItem()" class="px-6 py-2 bg-rose-300 text-rose-800 rounded-lg hover:bg-rose-400 font-medium">Legg til</button>
                 </div>
 
                 <div id="shoppingList" class="space-y-2">
@@ -72,34 +96,81 @@
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Middagsmeny</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
-                    <div class="day-menu bg-blue-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-blue-800 mb-2">Mandag</h3>
-                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-blue-200 rounded" onchange="saveMealPlan()">
-                    </div>
-                    <div class="day-menu bg-green-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-green-800 mb-2">Tirsdag</h3>
-                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-green-200 rounded" onchange="saveMealPlan()">
-                    </div>
-                    <div class="day-menu bg-yellow-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-yellow-800 mb-2">Onsdag</h3>
-                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-yellow-200 rounded" onchange="saveMealPlan()">
+                    <div class="day-menu bg-rose-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-rose-700 mb-2">Mandag</h3>
+                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-rose-200 rounded" onchange="saveMealPlan()">
                     </div>
                     <div class="day-menu bg-pink-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-pink-800 mb-2">Torsdag</h3>
+                        <h3 class="font-bold text-pink-700 mb-2">Tirsdag</h3>
                         <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-pink-200 rounded" onchange="saveMealPlan()">
                     </div>
                     <div class="day-menu bg-purple-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-purple-800 mb-2">Fredag</h3>
+                        <h3 class="font-bold text-purple-700 mb-2">Onsdag</h3>
                         <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-purple-200 rounded" onchange="saveMealPlan()">
                     </div>
                     <div class="day-menu bg-indigo-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-indigo-800 mb-2">Lørdag</h3>
+                        <h3 class="font-bold text-indigo-700 mb-2">Torsdag</h3>
                         <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-indigo-200 rounded" onchange="saveMealPlan()">
                     </div>
-                    <div class="day-menu bg-red-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-red-800 mb-2">Søndag</h3>
-                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-red-200 rounded" onchange="saveMealPlan()">
+                    <div class="day-menu bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-blue-700 mb-2">Fredag</h3>
+                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-blue-200 rounded" onchange="saveMealPlan()">
                     </div>
+                    <div class="day-menu bg-teal-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-teal-700 mb-2">Lørdag</h3>
+                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-teal-200 rounded" onchange="saveMealPlan()">
+                    </div>
+                    <div class="day-menu bg-green-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-green-700 mb-2">Søndag</h3>
+                        <input type="text" placeholder="Middagsrett" class="w-full px-3 py-2 text-sm border border-green-200 rounded" onchange="saveMealPlan()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middagsforslag Tab -->
+        <div id="middagsforslag" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Middagsforslag</h2>
+                
+                <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                    <h3 class="font-bold text-gray-700 mb-3">Legg til nytt middagsforslag</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="mealSuggestionName" placeholder="Navn på rett (f.eks. Spaghetti Carbonara)" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <select id="mealCategory" class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="">Velg kategori...</option>
+                            <option value="pasta">Pasta</option>
+                            <option value="kjoett">Kjøtt</option>
+                            <option value="fisk">Fisk</option>
+                            <option value="vegetar">Vegetar</option>
+                            <option value="suppe">Suppe</option>
+                            <option value="pizza">Pizza</option>
+                            <option value="salat">Salat</option>
+                            <option value="annet">Annet</option>
+                        </select>
+                        <input type="number" id="mealTime" placeholder="Tilberedningstid (min)" min="1" max="300" class="px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div class="mt-3">
+                        <textarea id="mealIngredients" placeholder="Ingredienser (valgfritt)" class="w-full px-4 py-2 border border-gray-300 rounded-lg h-20 resize-none"></textarea>
+                    </div>
+                    <button onclick="addMealSuggestion()" class="mt-3 px-6 py-2 bg-orange-300 text-orange-800 rounded-lg hover:bg-orange-400 font-medium">Legg til forslag</button>
+                </div>
+
+                <!-- Filter buttons -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="filterMeals('all')" class="filter-btn px-3 py-1 rounded-full bg-orange-200 text-orange-800 text-sm font-medium">Alle</button>
+                    <button onclick="filterMeals('pasta')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Pasta</button>
+                    <button onclick="filterMeals('kjoett')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Kjøtt</button>
+                    <button onclick="filterMeals('fisk')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Fisk</button>
+                    <button onclick="filterMeals('vegetar')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Vegetar</button>
+                    <button onclick="filterMeals('suppe')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Suppe</button>
+                    <button onclick="filterMeals('pizza')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Pizza</button>
+                    <button onclick="filterMeals('salat')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Salat</button>
+                    <button onclick="filterMeals('annet')" class="filter-btn px-3 py-1 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">Annet</button>
+                </div>
+
+                <div id="mealSuggestionsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Meal suggestions will be added here -->
                 </div>
             </div>
         </div>
@@ -113,12 +184,8 @@
                     <input type="text" id="newTask" placeholder="Ny arbeidsoppgave..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" onkeypress="if(event.key==='Enter') addTask()">
                     <select id="taskAssignee" class="px-4 py-2 border border-gray-300 rounded-lg">
                         <option value="">Tildel til...</option>
-                        <option value="0">Mamma</option>
-                        <option value="1">Pappa</option>
-                        <option value="2">Emma</option>
-                        <option value="3">Noah</option>
                     </select>
-                    <button onclick="addTask()" class="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 font-medium">Legg til</button>
+                    <button onclick="addTask()" class="px-6 py-2 bg-green-300 text-green-800 rounded-lg hover:bg-green-400 font-medium">Legg til</button>
                 </div>
 
                 <div id="taskList" class="space-y-2">
@@ -153,56 +220,56 @@
                         </select>
                         <input type="number" id="yearlyEventDay" placeholder="Dag (1-31)" min="1" max="31" class="px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
-                    <button onclick="addYearlyEvent()" class="mt-3 px-6 py-2 bg-indigo-400 text-white rounded-lg hover:bg-indigo-500 font-medium">Legg til hendelse</button>
+                    <button onclick="addYearlyEvent()" class="mt-3 px-6 py-2 bg-indigo-300 text-indigo-800 rounded-lg hover:bg-indigo-400 font-medium">Legg til hendelse</button>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="month-card bg-blue-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-blue-800 mb-3">Januar</h3>
+                    <div class="month-card bg-rose-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-rose-700 mb-3">Januar</h3>
                         <div id="month-0" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-green-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-green-800 mb-3">Februar</h3>
+                    <div class="month-card bg-pink-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-pink-700 mb-3">Februar</h3>
                         <div id="month-1" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-yellow-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-yellow-800 mb-3">Mars</h3>
+                    <div class="month-card bg-purple-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-purple-700 mb-3">Mars</h3>
                         <div id="month-2" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-pink-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-pink-800 mb-3">April</h3>
+                    <div class="month-card bg-indigo-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-indigo-700 mb-3">April</h3>
                         <div id="month-3" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-purple-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-purple-800 mb-3">Mai</h3>
+                    <div class="month-card bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-blue-700 mb-3">Mai</h3>
                         <div id="month-4" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-indigo-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-indigo-800 mb-3">Juni</h3>
+                    <div class="month-card bg-teal-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-teal-700 mb-3">Juni</h3>
                         <div id="month-5" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-red-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-red-800 mb-3">Juli</h3>
+                    <div class="month-card bg-green-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-green-700 mb-3">Juli</h3>
                         <div id="month-6" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-orange-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-orange-800 mb-3">August</h3>
+                    <div class="month-card bg-yellow-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-yellow-700 mb-3">August</h3>
                         <div id="month-7" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-teal-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-teal-800 mb-3">September</h3>
+                    <div class="month-card bg-orange-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-orange-700 mb-3">September</h3>
                         <div id="month-8" class="space-y-2"></div>
                     </div>
-                    <div class="month-card bg-cyan-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-cyan-800 mb-3">Oktober</h3>
+                    <div class="month-card bg-amber-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-amber-700 mb-3">Oktober</h3>
                         <div id="month-9" class="space-y-2"></div>
                     </div>
                     <div class="month-card bg-lime-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-lime-800 mb-3">November</h3>
+                        <h3 class="font-bold text-lime-700 mb-3">November</h3>
                         <div id="month-10" class="space-y-2"></div>
                     </div>
                     <div class="month-card bg-emerald-50 p-4 rounded-lg">
-                        <h3 class="font-bold text-emerald-800 mb-3">Desember</h3>
+                        <h3 class="font-bold text-emerald-700 mb-3">Desember</h3>
                         <div id="month-11" class="space-y-2"></div>
                     </div>
                 </div>
@@ -220,10 +287,6 @@
                         <input type="text" id="activityName" placeholder="Aktivitetsnavn (f.eks. Fotballtrening)" class="px-4 py-2 border border-gray-300 rounded-lg">
                         <select id="activityAssignee" class="px-4 py-2 border border-gray-300 rounded-lg">
                             <option value="">Tildel til...</option>
-                            <option value="0">Mamma</option>
-                            <option value="1">Pappa</option>
-                            <option value="2">Emma</option>
-                            <option value="3">Noah</option>
                         </select>
                         <select id="activityType" class="px-4 py-2 border border-gray-300 rounded-lg">
                             <option value="weekly">Ukentlig</option>
@@ -242,7 +305,7 @@
                         </select>
                         <input type="time" id="activityTime" class="px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
-                    <button onclick="addActivity()" class="mt-3 px-6 py-2 bg-purple-400 text-white rounded-lg hover:bg-purple-500 font-medium">Legg til aktivitet</button>
+                    <button onclick="addActivity()" class="mt-3 px-6 py-2 bg-purple-300 text-purple-800 rounded-lg hover:bg-purple-400 font-medium">Legg til aktivitet</button>
                 </div>
 
                 <div id="activityList" class="space-y-3">
@@ -255,11 +318,14 @@
     <script>
         // Global variables
         let activeUser = 0;
-        let users = ['Mamma', 'Pappa', 'Emma', 'Noah'];
+        let users = ['Mamma', 'Pappa'];
         let shoppingItems = [];
         let tasks = [];
         let activities = [];
         let yearlyEvents = [];
+        let mealSuggestions = [];
+        let currentWeekOffset = 0;
+        let currentMealFilter = 'all';
 
         // Initialize when page loads
         window.onload = function() {
@@ -299,13 +365,59 @@
             }
         }
 
+        function deleteUser(userId) {
+            if (users.length <= 1) {
+                alert('Du må ha minst én bruker!');
+                return;
+            }
+            
+            if (confirm(`Er du sikker på at du vil slette "${users[userId]}"?`)) {
+                // Update references in existing data
+                shoppingItems.forEach(item => {
+                    if (item.addedBy > userId) item.addedBy--;
+                });
+                
+                tasks.forEach(task => {
+                    if (task.createdBy > userId) task.createdBy--;
+                    if (task.assignedTo > userId) task.assignedTo--;
+                    if (task.assignedTo === userId) task.assignedTo = null;
+                });
+                
+                activities.forEach(activity => {
+                    if (activity.createdBy > userId) activity.createdBy--;
+                    if (activity.assignedTo > userId) activity.assignedTo--;
+                    if (activity.assignedTo === userId) activity.assignedTo = null;
+                });
+                
+                yearlyEvents.forEach(event => {
+                    if (event.createdBy > userId) event.createdBy--;
+                });
+                
+                // Remove user and adjust activeUser
+                users.splice(userId, 1);
+                if (activeUser >= userId && activeUser > 0) {
+                    activeUser--;
+                }
+                
+                updateUserInterface();
+                renderShoppingList();
+                renderTaskList();
+                renderActivityList();
+                renderYearlyEvents();
+                saveData();
+            }
+        }
+
         function updateUserInterface() {
             const userButtons = document.getElementById('userButtons');
             userButtons.innerHTML = '';
             
             users.forEach((user, index) => {
+                const userContainer = document.createElement('div');
+                userContainer.className = 'relative inline-block';
+                
                 const btn = document.createElement('button');
-                btn.className = `user-btn px-3 py-1 rounded-full text-white text-sm font-medium user-color-${(index % 5) + 1}`;
+                btn.className = `user-btn px-3 py-1 rounded-full text-sm font-medium user-color-${(index % 5) + 1}`;
                 btn.textContent = user;
                 btn.style.opacity = index === activeUser ? '1' : '0.7';
                 btn.style.transform = index === activeUser ? 'scale(1.05)' : 'scale(1)';
@@ -313,7 +425,25 @@
                     activeUser = index;
                     updateUserButtons();
                 };
-                userButtons.appendChild(btn);
+                btn.ondblclick = function(e) {
+                    e.stopPropagation();
+                    editUserName(index);
+                };
+                
+                // Add delete button (X) for users beyond the first 4
+                if (users.length > 4 && index >= 4) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn.className = 'absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center hover:bg-red-600';
+                    deleteBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        deleteUser(index);
+                    };
+                    userContainer.appendChild(deleteBtn);
+                }
+                
+                userContainer.appendChild(btn);
+                userButtons.appendChild(userContainer);
             });
             
             // Update dropdowns
@@ -353,15 +483,151 @@
             });
             
             const colors = {
-                'handleliste': 'bg-blue-400',
-                'ukesmeny': 'bg-green-400', 
-                'arbeidsoppgaver': 'bg-green-400',
-                'aarshjul': 'bg-indigo-400',
-                'aktiviteter': 'bg-purple-400'
+                'ukeoversikt': 'bg-rose-300',
+                'handleliste': 'bg-rose-300',
+                'ukesmeny': 'bg-green-300',
+                'middagsforslag': 'bg-orange-300',
+                'arbeidsoppgaver': 'bg-green-300',
+                'aarshjul': 'bg-indigo-300',
+                'aktiviteter': 'bg-purple-300'
             };
             
             event.target.classList.remove('bg-gray-200', 'text-gray-700');
-            event.target.classList.add(colors[tabName] || 'bg-blue-400', 'text-white');
+            event.target.classList.add(colors[tabName] || 'bg-rose-300', 'text-white');
+        }
+
+        // Week overview functions
+        function changeWeek(direction) {
+            currentWeekOffset += direction;
+            renderWeekOverview();
+        }
+
+        function getWeekDates(offset = 0) {
+            const today = new Date();
+            const currentDay = today.getDay();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - currentDay + 1 + (offset * 7));
+            
+            const weekDates = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(monday);
+                date.setDate(monday.getDate() + i);
+                weekDates.push(date);
+            }
+            return weekDates;
+        }
+
+        function renderWeekOverview() {
+            const weekDates = getWeekDates(currentWeekOffset);
+            const weekTitle = document.getElementById('weekTitle');
+            const weekOverview = document.getElementById('weekOverview');
+            
+            // Update week title
+            const startDate = weekDates[0];
+            const endDate = weekDates[6];
+            const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 
+                              'juli', 'august', 'september', 'oktober', 'november', 'desember'];
+            
+            weekTitle.textContent = `Uke ${getWeekNumber(startDate)} - ${startDate.getDate()}. ${monthNames[startDate.getMonth()]} til ${endDate.getDate()}. ${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;
+            
+            // Clear previous content
+            weekOverview.innerHTML = '';
+            
+            // Create overview for each user
+            users.forEach((user, userIndex) => {
+                const userCard = document.createElement('div');
+                userCard.className = `bg-white rounded-lg border-2 border-gray-100 p-4 user-color-${(userIndex % 5) + 1}`;
+                
+                const userHeader = document.createElement('h3');
+                userHeader.className = 'text-lg font-bold mb-4';
+                userHeader.textContent = user;
+                userCard.appendChild(userHeader);
+                
+                // Create day columns
+                const daysContainer = document.createElement('div');
+                daysContainer.className = 'grid grid-cols-7 gap-2';
+                
+                const dayNames = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'];
+                
+                weekDates.forEach((date, dayIndex) => {
+                    const dayColumn = document.createElement('div');
+                    dayColumn.className = 'bg-white bg-opacity-50 rounded p-2 min-h-[120px]';
+                    
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'font-semibold text-sm mb-2 text-center';
+                    dayHeader.textContent = `${dayNames[dayIndex]} ${date.getDate()}/${date.getMonth() + 1}`;
+                    dayColumn.appendChild(dayHeader);
+                    
+                    const eventsContainer = document.createElement('div');
+                    eventsContainer.className = 'space-y-1';
+                    
+                    // Add activities for this day and user
+                    const dayActivities = getActivitiesForDay(date, userIndex);
+                    dayActivities.forEach(activity => {
+                        const activityDiv = document.createElement('div');
+                        activityDiv.className = 'text-xs bg-white bg-opacity-70 rounded px-2 py-1';
+                        activityDiv.textContent = activity.time ? `${activity.time} ${activity.name}` : activity.name;
+                        eventsContainer.appendChild(activityDiv);
+                    });
+                    
+                    // Add tasks for this user
+                    const userTasks = tasks.filter(task => 
+                        task.assignedTo === userIndex && !task.completed
+                    );
+                    if (userTasks.length > 0 && dayIndex === 0) { // Show tasks on Monday
+                        userTasks.slice(0, 2).forEach(task => {
+                            const taskDiv = document.createElement('div');
+                            taskDiv.className = 'text-xs bg-yellow-100 rounded px-2 py-1';
+                            taskDiv.textContent = `📋 ${task.text}`;
+                            eventsContainer.appendChild(taskDiv);
+                        });
+                    }
+                    
+                    // Add yearly events for this day
+                    const yearlyEventsForDay = getYearlyEventsForDay(date);
+                    yearlyEventsForDay.forEach(event => {
+                        const eventDiv = document.createElement('div');
+                        eventDiv.className = 'text-xs bg-pink-100 rounded px-2 py-1';
+                        eventDiv.textContent = `🎉 ${event.name}`;
+                        eventsContainer.appendChild(eventDiv);
+                    });
+                    
+                    dayColumn.appendChild(eventsContainer);
+                    daysContainer.appendChild(dayColumn);
+                });
+                
+                userCard.appendChild(daysContainer);
+                weekOverview.appendChild(userCard);
+            });
+        }
+
+        function getActivitiesForDay(date, userIndex) {
+            const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()];
+            
+            return activities.filter(activity => {
+                if (activity.assignedTo !== userIndex) return false;
+                
+                if (activity.type === 'weekly' && activity.day === dayName) {
+                    return true;
+                }
+                
+                // Add logic for monthly and yearly activities if needed
+                return false;
+            });
+        }
+
+        function getYearlyEventsForDay(date) {
+            return yearlyEvents.filter(event => 
+                event.month === date.getMonth() && event.day === date.getDate()
+            );
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
         }
 
         // Shopping list functions
@@ -414,8 +680,8 @@
                     <span class="${item.completed ? 'line-through text-gray-500' : 'text-gray-800'} flex-1">
                         ${item.text}
                     </span>
-                    <span class="text-xs text-gray-500 user-color-${(item.addedBy % 5) + 1} px-2 py-1 rounded-full text-white">
-                        ${users[item.addedBy]}
+                    <span class="text-xs px-2 py-1 rounded-full user-color-${(item.addedBy % 5) + 1}">
+                        ${users[item.addedBy] || 'Ukjent'}
                     </span>
                     <button onclick="deleteShoppingItem(${item.id})" 
                             class="text-red-500 hover:text-red-700 text-sm">
@@ -474,7 +740,7 @@
                 const div = document.createElement('div');
                 div.className = `flex items-center gap-3 p-3 border rounded-lg ${task.completed ? 'bg-gray-50 opacity-60' : 'bg-white'}`;
                 
-                const assignedText = task.assignedTo !== null ? users[task.assignedTo] : 'Ikke tildelt';
+                const assignedText = task.assignedTo !== null ? (users[task.assignedTo] || 'Ukjent') : 'Ikke tildelt';
                 
                 div.innerHTML = `
                     <input type="checkbox" ${task.completed ? 'checked' : ''} 
@@ -550,7 +816,7 @@
                 const div = document.createElement('div');
                 div.className = 'flex items-center justify-between p-4 border rounded-lg bg-white';
                 
-                const assignedText = activity.assignedTo !== null ? users[activity.assignedTo] : 'Ikke tildelt';
+                const assignedText = activity.assignedTo !== null ? (users[activity.assignedTo] || 'Ukjent') : 'Ikke tildelt';
                 
                 div.innerHTML = `
                     <div class="flex-1">
@@ -561,7 +827,7 @@
                         </p>
                         <div class="flex gap-2 mt-2">
                             <span class="text-xs text-gray-500 user-color-${(activity.createdBy % 5) + 1} px-2 py-1 rounded-full text-white">
-                                Opprettet av ${users[activity.createdBy]}
+                                Opprettet av ${users[activity.createdBy] || 'Ukjent'}
                             </span>
                             <span class="text-xs text-gray-500 ${activity.assignedTo !== null ? `user-color-${(activity.assignedTo % 5) + 1}` : 'bg-gray-400'} px-2 py-1 rounded-full text-white">
                                 ${assignedText}
@@ -626,7 +892,7 @@
                     <div class="flex-1">
                         <span class="font-medium">${event.day}. ${event.name}</span>
                         <div class="text-xs text-gray-500 user-color-${(event.createdBy % 5) + 1} px-2 py-1 rounded-full text-white inline-block mt-1">
-                            ${users[event.createdBy]}
+                            ${users[event.createdBy] || 'Ukjent'}
                         </div>
                     </div>
                     <button onclick="deleteYearlyEvent(${event.id})" 
@@ -665,6 +931,142 @@
             }
         }
 
+        // Meal suggestions functions
+        function addMealSuggestion() {
+            const name = document.getElementById('mealSuggestionName').value.trim();
+            const category = document.getElementById('mealCategory').value;
+            const time = document.getElementById('mealTime').value;
+            const ingredients = document.getElementById('mealIngredients').value.trim();
+            
+            if (name) {
+                const mealSuggestion = {
+                    id: Date.now(),
+                    name: name,
+                    category: category || 'annet',
+                    time: time ? parseInt(time) : null,
+                    ingredients: ingredients,
+                    createdBy: activeUser
+                };
+                
+                mealSuggestions.push(mealSuggestion);
+                
+                document.getElementById('mealSuggestionName').value = '';
+                document.getElementById('mealCategory').value = '';
+                document.getElementById('mealTime').value = '';
+                document.getElementById('mealIngredients').value = '';
+                
+                renderMealSuggestions();
+                saveData();
+            }
+        }
+
+        function deleteMealSuggestion(id) {
+            mealSuggestions = mealSuggestions.filter(meal => meal.id !== id);
+            renderMealSuggestions();
+            saveData();
+        }
+
+        function filterMeals(category) {
+            currentMealFilter = category;
+            
+            // Update filter button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-200', 'text-orange-800');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-orange-200', 'text-orange-800');
+            
+            renderMealSuggestions();
+        }
+
+        function renderMealSuggestions() {
+            const list = document.getElementById('mealSuggestionsList');
+            list.innerHTML = '';
+            
+            const categoryNames = {
+                pasta: 'Pasta',
+                kjoett: 'Kjøtt',
+                fisk: 'Fisk',
+                vegetar: 'Vegetar',
+                suppe: 'Suppe',
+                pizza: 'Pizza',
+                salat: 'Salat',
+                annet: 'Annet'
+            };
+
+            const categoryEmojis = {
+                pasta: '🍝',
+                kjoett: '🥩',
+                fisk: '🐟',
+                vegetar: '🥬',
+                suppe: '🍲',
+                pizza: '🍕',
+                salat: '🥗',
+                annet: '🍽️'
+            };
+            
+            const filteredMeals = currentMealFilter === 'all' 
+                ? mealSuggestions 
+                : mealSuggestions.filter(meal => meal.category === currentMealFilter);
+            
+            filteredMeals.forEach(meal => {
+                const div = document.createElement('div');
+                div.className = 'bg-orange-50 border border-orange-200 rounded-lg p-4 hover:shadow-md transition-shadow';
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                            ${categoryEmojis[meal.category] || '🍽️'} ${meal.name}
+                        </h4>
+                        <button onclick="deleteMealSuggestion(${meal.id})" 
+                                class="text-red-500 hover:text-red-700 text-sm">
+                            🗑️
+                        </button>
+                    </div>
+                    <div class="flex gap-2 mb-2">
+                        <span class="text-xs bg-orange-200 text-orange-800 px-2 py-1 rounded-full">
+                            ${categoryNames[meal.category] || 'Annet'}
+                        </span>
+                        ${meal.time ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">⏱️ ${meal.time} min</span>` : ''}
+                    </div>
+                    ${meal.ingredients ? `
+                        <div class="text-sm text-gray-600 mb-2">
+                            <strong>Ingredienser:</strong><br>
+                            ${meal.ingredients.replace(/\n/g, '<br>')}
+                        </div>
+                    ` : ''}
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-500 user-color-${(meal.createdBy % 5) + 1} px-2 py-1 rounded-full">
+                            ${users[meal.createdBy] || 'Ukjent'}
+                        </span>
+                        <button onclick="copyToMealPlan('${meal.name}')" 
+                                class="text-xs bg-green-200 text-green-800 px-3 py-1 rounded-full hover:bg-green-300">
+                            📋 Kopier til meny
+                        </button>
+                    </div>
+                `;
+                
+                list.appendChild(div);
+            });
+            
+            if (filteredMeals.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'col-span-full text-center text-gray-500 py-8';
+                emptyDiv.textContent = currentMealFilter === 'all' 
+                    ? 'Ingen middagsforslag lagt til ennå' 
+                    : `Ingen ${categoryNames[currentMealFilter].toLowerCase()}-retter funnet`;
+                list.appendChild(emptyDiv);
+            }
+        }
+
+        function copyToMealPlan(mealName) {
+            // This function could be enhanced to show a modal for selecting which day
+            // For now, we'll just show an alert
+            alert(`"${mealName}" er kopiert! Gå til Middagsmeny-fanen for å lime inn på ønsket dag.`);
+        }
+
         // Data persistence
         function saveData() {
             const data = {
@@ -672,7 +1074,8 @@
                 shoppingItems: shoppingItems,
                 tasks: tasks,
                 activities: activities,
-                yearlyEvents: yearlyEvents
+                yearlyEvents: yearlyEvents,
+                mealSuggestions: mealSuggestions
             };
             localStorage.setItem('familieOrganizer', JSON.stringify(data));
         }
@@ -681,11 +1084,12 @@
             const saved = localStorage.getItem('familieOrganizer');
             if (saved) {
                 const data = JSON.parse(saved);
-                users = data.users || ['Mamma', 'Pappa', 'Emma', 'Noah'];
+                users = data.users || ['Mamma', 'Pappa'];
                 shoppingItems = data.shoppingItems || [];
                 tasks = data.tasks || [];
                 activities = data.activities || [];
                 yearlyEvents = data.yearlyEvents || [];
+                mealSuggestions = data.mealSuggestions || [];
             }
             
             updateUserInterface();
@@ -693,8 +1097,10 @@
             renderTaskList();
             renderActivityList();
             renderYearlyEvents();
+            renderMealSuggestions();
+            renderWeekOverview();
             loadMealPlan();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'988fd0d995e85ebd',t:'MTc1OTUyOTkxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98901053e27f0b31',t:'MTc1OTUzMjUxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
