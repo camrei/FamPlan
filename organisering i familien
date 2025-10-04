@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamPlan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .user-color-1 { background-color: #f87171; }
+        .user-color-2 { background-color: #60a5fa; }
+        .user-color-3 { background-color: #34d399; }
+        .user-color-4 { background-color: #fbbf24; }
+        .user-color-5 { background-color: #a78bfa; }
+        .user-color-6 { background-color: #fb7185; }
+        .user-color-7 { background-color: #38bdf8; }
+        .user-color-8 { background-color: #4ade80; }
+        
+        .day-menu {
+            min-height: 60px;
+        }
+        
+        .month-container {
+            min-height: 200px;
+        }
+
+        .home-button {
+            transition: all 0.3s ease;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen active">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 mt-20">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-bold text-blue-600 mb-2">🏠 FamPlan</h1>
+                    <p class="text-gray-600">Logg inn med din personlige kode</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <input type="text" id="loginCode" placeholder="Skriv inn din kode..." 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-lg"
+                           onkeypress="if(event.key==='Enter') login()">
+                    <button onclick="login()" 
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium text-lg">
+                        Logg inn
+                    </button>
+                </div>
+                
+                <div id="loginError" class="text-red-500 text-center mt-4 hidden"></div>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="homeScreen" class="screen">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">🏠 FamPlan</h1>
+                <p class="text-gray-600" id="welcomeMessage">Velkommen!</p>
+                <button onclick="logout()" class="mt-2 text-sm text-blue-500 hover:text-blue-700">
+                    Logg ut
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <button onclick="showScreen('ukeoversikt')" class="home-button bg-rose-400 hover:bg-rose-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">📅</div>
+                    <div class="font-semibold">Ukeoversikt</div>
+                </button>
+                
+                <button onclick="showScreen('handleliste')" class="home-button bg-green-400 hover:bg-green-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">🛒</div>
+                    <div class="font-semibold">Handleliste</div>
+                </button>
+                
+                <button onclick="showScreen('ukesmeny')" class="home-button bg-orange-400 hover:bg-orange-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">🍽️</div>
+                    <div class="font-semibold">Ukesmeny</div>
+                </button>
+                
+                <button onclick="showScreen('middagsforslag')" class="home-button bg-yellow-400 hover:bg-yellow-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">🍳</div>
+                    <div class="font-semibold">Middagsforslag</div>
+                </button>
+                
+                <button onclick="showScreen('arbeidsoppgaver')" class="home-button bg-blue-400 hover:bg-blue-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">✅</div>
+                    <div class="font-semibold">Arbeidsoppgaver</div>
+                </button>
+                
+                <button onclick="showScreen('aarshjul')" class="home-button bg-purple-400 hover:bg-purple-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">🎯</div>
+                    <div class="font-semibold">Årshjul</div>
+                </button>
+                
+                <button onclick="showScreen('aktiviteter')" class="home-button bg-indigo-400 hover:bg-indigo-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">🏃‍♀️</div>
+                    <div class="font-semibold">Aktiviteter</div>
+                </button>
+                
+                <button onclick="showScreen('brukere')" class="home-button bg-pink-400 hover:bg-pink-500 text-white p-6 rounded-xl shadow-lg">
+                    <div class="text-4xl mb-2">👥</div>
+                    <div class="font-semibold">Brukere</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Back Button (shown on all screens except home and login) -->
+        <button id="backButton" onclick="showScreen('homeScreen')" 
+                class="fixed top-4 left-4 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-lg hidden">
+            ← Hjem
+        </button>
+
+        <!-- Brukere Screen -->
+        <div id="brukere" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">👥 Brukere</h2>
+                
+                <!-- Admin notice -->
+                <div id="adminNotice" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6" style="display: none;">
+                    <div class="flex items-center gap-2">
+                        <span class="text-blue-600">🔐</span>
+                        <div>
+                            <h4 class="font-semibold text-blue-800">Administrator-tilgang</h4>
+                            <p class="text-sm text-blue-700">Du kan se alle brukerkoder og administrere brukere. Hold kodene sikre og del dem kun direkte med den enkelte bruker.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Only show add user form if current user is admin -->
+                <div id="addUserForm" class="bg-pink-50 rounded-lg p-4 mb-6" style="display: none;">
+                    <h3 class="font-semibold text-gray-800 mb-4">Legg til ny bruker</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <input type="text" id="newUserName" placeholder="Navn på bruker..." 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                               onkeypress="if(event.key==='Enter') addUser()">
+                        <input type="text" id="newUserCode" placeholder="Velg kode (4 siffer)..." 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                               maxlength="4" pattern="[0-9]{4}"
+                               onkeypress="if(event.key==='Enter') addUser()">
+                        <button onclick="addUser()" 
+                                class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg font-medium">
+                            Legg til
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="usersList" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Ukeoversikt Screen -->
+        <div id="ukeoversikt" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <button onclick="changeWeek(-1)" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg">
+                        ← Forrige uke
+                    </button>
+                    <h2 id="weekTitle" class="text-2xl font-bold text-gray-800"></h2>
+                    <button onclick="changeWeek(1)" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg">
+                        Neste uke →
+                    </button>
+                </div>
+                <div id="weekOverview" class="space-y-6"></div>
+            </div>
+        </div>
+
+        <!-- Handleliste Screen -->
+        <div id="handleliste" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">🛒 Handleliste</h2>
+                
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="newShoppingItem" placeholder="Legg til vare..." 
+                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           onkeypress="if(event.key==='Enter') addShoppingItem()">
+                    <button onclick="addShoppingItem()" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                        Legg til
+                    </button>
+                </div>
+                
+                <div id="shoppingList" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- Ukesmeny Screen -->
+        <div id="ukesmeny" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">🍽️ Ukesmeny</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <div class="day-menu">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mandag</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                               placeholder="Hva skal vi ha til middag?" onchange="saveMealPlan()">
+                    </div>
+                    <div class="day-menu">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tirsdag</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                               placeholder="Hva skal vi ha til middag?" onchange="saveMealPlan()">
+                    </div>
+                    <div class="day-menu">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Onsdag</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                               placeholder="Hva skal vi ha til middag?" onchange="saveMealPlan()">
+                    </div>
+                    <div class="day-menu">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Torsdag</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                               placeholder="Hva skal vi ha til middag?" onchange="saveMealPlan()">
+                    </div>
+                    <div class="day-menu">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fredag</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                               placeholder="Hva skal vi ha til middag?" onchange="saveMealPlan()">
+                    </div>
+                    <div class="day-menu">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lørdag</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                               placeholder="Hva skal vi ha til middag?" onchange="saveMealPlan()">
+                    </div>
+                    <div class="day-menu">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Søndag</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                               placeholder="Hva skal vi ha til middag?" onchange="saveMealPlan()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middagsforslag Screen -->
+        <div id="middagsforslag" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">🍳 Middagsforslag</h2>
+                
+                <div class="bg-orange-50 rounded-lg p-4 mb-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">Legg til nytt middagsforslag</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                        <input type="text" id="mealSuggestionName" placeholder="Navn på rett..." 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                        <select id="mealCategory" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                            <option value="">Velg kategori</option>
+                            <option value="pasta">Pasta</option>
+                            <option value="kjoett">Kjøtt</option>
+                            <option value="fisk">Fisk</option>
+                            <option value="vegetar">Vegetar</option>
+                            <option value="suppe">Suppe</option>
+                            <option value="pizza">Pizza</option>
+                            <option value="salat">Salat</option>
+                            <option value="annet">Annet</option>
+                        </select>
+                        <input type="number" id="mealTime" placeholder="Tid (minutter)" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                        <button onclick="addMealSuggestion()" 
+                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium">
+                            Legg til
+                        </button>
+                    </div>
+                    <textarea id="mealIngredients" placeholder="Ingredienser (en per linje)..." 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500" 
+                              rows="3"></textarea>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="filterMeals('all')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-orange-200 text-orange-800">
+                        Alle
+                    </button>
+                    <button onclick="filterMeals('pasta')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                        🍝 Pasta
+                    </button>
+                    <button onclick="filterMeals('kjoett')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                        🥩 Kjøtt
+                    </button>
+                    <button onclick="filterMeals('fisk')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                        🐟 Fisk
+                    </button>
+                    <button onclick="filterMeals('vegetar')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                        🥬 Vegetar
+                    </button>
+                    <button onclick="filterMeals('suppe')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                        🍲 Suppe
+                    </button>
+                    <button onclick="filterMeals('pizza')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                        🍕 Pizza
+                    </button>
+                    <button onclick="filterMeals('salat')" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                        🥗 Salat
+                    </button>
+                </div>
+
+                <div id="mealSuggestionsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- Arbeidsoppgaver Screen -->
+        <div id="arbeidsoppgaver" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">✅ Arbeidsoppgaver</h2>
+                
+                <div class="bg-green-50 rounded-lg p-4 mb-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">Legg til ny oppgave</h3>
+                    <div class="space-y-4">
+                        <input type="text" id="newTask" placeholder="Beskrivelse av oppgave..." 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                               onkeypress="if(event.key==='Enter') addTask()">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tildel til</label>
+                                <div id="taskAssigneeCheckboxes" class="space-y-2 p-3 border border-gray-300 rounded-lg bg-gray-50 max-h-32 overflow-y-auto">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dag</label>
+                                <select id="taskDay" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                    <option value="">Velg dag...</option>
+                                    <option value="monday">Mandag</option>
+                                    <option value="tuesday">Tirsdag</option>
+                                    <option value="wednesday">Onsdag</option>
+                                    <option value="thursday">Torsdag</option>
+                                    <option value="friday">Fredag</option>
+                                    <option value="saturday">Lørdag</option>
+                                    <option value="sunday">Søndag</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Påminnelse</label>
+                                <select id="taskReminder" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                    <option value="">Ingen påminnelse</option>
+                                    <option value="1">1 dag før</option>
+                                    <option value="3">3 dager før</option>
+                                    <option value="7">1 uke før</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button onclick="addTask()" 
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium">
+                            Legg til oppgave
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="taskList" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- Årshjul Screen -->
+        <div id="aarshjul" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">🎯 Årshjul</h2>
+                
+                <div class="bg-indigo-50 rounded-lg p-4 mb-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">Legg til årlig hendelse</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <input type="text" id="yearlyEventName" placeholder="Navn på hendelse..." 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        <select id="yearlyEventMonth" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Måned</option>
+                            <option value="0">Januar</option>
+                            <option value="1">Februar</option>
+                            <option value="2">Mars</option>
+                            <option value="3">April</option>
+                            <option value="4">Mai</option>
+                            <option value="5">Juni</option>
+                            <option value="6">Juli</option>
+                            <option value="7">August</option>
+                            <option value="8">September</option>
+                            <option value="9">Oktober</option>
+                            <option value="10">November</option>
+                            <option value="11">Desember</option>
+                        </select>
+                        <input type="number" id="yearlyEventDay" placeholder="Dag" min="1" max="31" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tildel til</label>
+                            <div id="yearlyEventAssigneeCheckboxes" class="p-3 border border-gray-300 rounded-lg bg-gray-50 max-h-32 overflow-y-auto">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Påminnelse</label>
+                            <select id="yearlyEventReminder" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                <option value="">Ingen påminnelse</option>
+                                <option value="1">1 dag før</option>
+                                <option value="3">3 dager før</option>
+                                <option value="7">1 uke før</option>
+                                <option value="14">2 uker før</option>
+                                <option value="30">1 måned før</option>
+                            </select>
+                        </div>
+                        <button onclick="addYearlyEvent()" 
+                                class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium">
+                            Legg til
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-blue-800 mb-3">Januar</h3>
+                        <div id="month-0" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-purple-800 mb-3">Februar</h3>
+                        <div id="month-1" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-green-800 mb-3">Mars</h3>
+                        <div id="month-2" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-yellow-800 mb-3">April</h3>
+                        <div id="month-3" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-pink-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-pink-800 mb-3">Mai</h3>
+                        <div id="month-4" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-indigo-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-indigo-800 mb-3">Juni</h3>
+                        <div id="month-5" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-red-800 mb-3">Juli</h3>
+                        <div id="month-6" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-orange-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-orange-800 mb-3">August</h3>
+                        <div id="month-7" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-teal-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-teal-800 mb-3">September</h3>
+                        <div id="month-8" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-amber-800 mb-3">Oktober</h3>
+                        <div id="month-9" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-gray-800 mb-3">November</h3>
+                        <div id="month-10" class="month-container space-y-2"></div>
+                    </div>
+                    <div class="bg-emerald-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-emerald-800 mb-3">Desember</h3>
+                        <div id="month-11" class="month-container space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aktiviteter Screen -->
+        <div id="aktiviteter" class="screen">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">🏃‍♀️ Aktiviteter</h2>
+                
+                <div class="bg-purple-50 rounded-lg p-4 mb-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">Legg til ny aktivitet</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <input type="text" id="activityName" placeholder="Aktivitetsnavn..." 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <select id="activityType" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="weekly">Ukentlig</option>
+                            <option value="monthly">Månedlig</option>
+                            <option value="yearly">Årlig</option>
+                            <option value="custom">Egendefinert</option>
+                        </select>
+                        <select id="activityDay" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="monday">Mandag</option>
+                            <option value="tuesday">Tirsdag</option>
+                            <option value="wednesday">Onsdag</option>
+                            <option value="thursday">Torsdag</option>
+                            <option value="friday">Fredag</option>
+                            <option value="saturday">Lørdag</option>
+                            <option value="sunday">Søndag</option>
+                        </select>
+                        <input type="time" id="activityTime" 
+                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <select id="activityAssignee" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">Tildel til...</option>
+                        </select>
+                        <select id="activityReminder" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">Ingen påminnelse</option>
+                            <option value="1">1 dag før</option>
+                            <option value="3">3 dager før</option>
+                            <option value="7">1 uke før</option>
+                        </select>
+                    </div>
+                    <button onclick="addActivity()" 
+                            class="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg font-medium">
+                        Legg til aktivitet
+                    </button>
+                </div>
+                
+                <div id="activityList" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let users = [];
+        let currentUser = null;
+        let currentWeekOffset = 0;
+        let currentMealFilter = 'all';
+        
+        let shoppingItems = [];
+        let tasks = [];
+        let activities = [];
+        let yearlyEvents = [];
+        let mealSuggestions = [];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            if (users.length === 0) {
+                // Add default admin user if no users exist
+                users.push({
+                    id: 1,
+                    name: 'Admin',
+                    code: '1234',
+                    isAdmin: true
+                });
+                saveData();
+            }
+        });
+
+        // Screen management
+        function showScreen(screenName) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenName).classList.add('active');
+            
+            const backButton = document.getElementById('backButton');
+            if (screenName === 'homeScreen' || screenName === 'loginScreen') {
+                backButton.classList.add('hidden');
+            } else {
+                backButton.classList.remove('hidden');
+            }
+            
+            // Update content when showing specific screens
+            if (screenName === 'ukeoversikt') {
+                renderWeekOverview();
+            } else if (screenName === 'brukere') {
+                renderUsersList();
+            } else if (screenName === 'arbeidsoppgaver') {
+                updateTaskAssigneeOptions();
+                renderTaskList();
+            } else if (screenName === 'aktiviteter') {
+                updateActivityAssigneeOptions();
+                renderActivityList();
+            } else if (screenName === 'handleliste') {
+                renderShoppingList();
+            } else if (screenName === 'middagsforslag') {
+                renderMealSuggestions();
+            } else if (screenName === 'aarshjul') {
+                updateYearlyEventAssigneeOptions();
+                renderYearlyEvents();
+            }
+        }
+
+        // Login system
+        function login() {
+            const code = document.getElementById('loginCode').value.trim();
+            const user = users.find(u => u.code === code);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('welcomeMessage').textContent = `Velkommen, ${user.name}!`;
+                showScreen('homeScreen');
+                document.getElementById('loginCode').value = '';
+                document.getElementById('loginError').classList.add('hidden');
+            } else {
+                document.getElementById('loginError').textContent = 'Ugyldig kode. Prøv igjen.';
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            showScreen('loginScreen');
+        }
+
+        // User management
+        function addUser() {
+            const name = document.getElementById('newUserName').value.trim();
+            const code = document.getElementById('newUserCode').value.trim();
+            
+            if (!name) {
+                alert('Vennligst skriv inn et navn');
+                return;
+            }
+            
+            if (!code || code.length !== 4 || !/^\d{4}$/.test(code)) {
+                alert('Koden må være nøyaktig 4 siffer');
+                return;
+            }
+            
+            // Check if code already exists
+            if (users.some(user => user.code === code)) {
+                alert('Denne koden er allerede i bruk. Velg en annen kode.');
+                return;
+            }
+            
+            const user = {
+                id: Date.now(),
+                name: name,
+                code: code,
+                isAdmin: false
+            };
+            
+            users.push(user);
+            document.getElementById('newUserName').value = '';
+            document.getElementById('newUserCode').value = '';
+            renderUsersList();
+            updateAllUserDropdowns();
+            saveData();
+        }
+
+        function editUser(userId) {
+            // Hide all other edit forms
+            document.querySelectorAll('[id^="editForm-"]').forEach(form => {
+                form.classList.add('hidden');
+            });
+            
+            // Show this user's edit form
+            const editForm = document.getElementById(`editForm-${userId}`);
+            if (editForm) {
+                editForm.classList.remove('hidden');
+            }
+        }
+
+        function cancelUserEdit(userId) {
+            const editForm = document.getElementById(`editForm-${userId}`);
+            if (editForm) {
+                editForm.classList.add('hidden');
+            }
+        }
+
+        function saveUserEdit(userId, newName, newCode) {
+            if (!newName.trim()) {
+                alert('Navnet kan ikke være tomt');
+                return;
+            }
+            
+            if (!newCode || newCode.length !== 4 || !/^\d{4}$/.test(newCode)) {
+                alert('Koden må være nøyaktig 4 siffer');
+                return;
+            }
+            
+            // Check if code already exists (but not for the current user)
+            if (users.some(user => user.code === newCode && user.id !== userId)) {
+                alert('Denne koden er allerede i bruk. Velg en annen kode.');
+                return;
+            }
+            
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                user.name = newName.trim();
+                user.code = newCode;
+                
+                // Update current user display if editing current user
+                if (currentUser && currentUser.id === userId) {
+                    currentUser.name = newName.trim();
+                    currentUser.code = newCode;
+                    document.getElementById('welcomeMessage').textContent = `Velkommen, ${currentUser.name}!`;
+                }
+                
+                renderUsersList();
+                updateAllUserDropdowns();
+                saveData();
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Er du sikker på at du vil slette denne brukeren?')) {
+                users = users.filter(user => user.id !== userId);
+                renderUsersList();
+                updateAllUserDropdowns();
+                saveData();
+            }
+        }
+
+        function renderUsersList() {
+            const list = document.getElementById('usersList');
+            const addUserForm = document.getElementById('addUserForm');
+            const adminNotice = document.getElementById('adminNotice');
+            
+            // Show admin elements only if current user is admin
+            if (currentUser && currentUser.isAdmin) {
+                addUserForm.style.display = 'block';
+                adminNotice.style.display = 'block';
+            } else {
+                addUserForm.style.display = 'none';
+                adminNotice.style.display = 'none';
+            }
+            
+            list.innerHTML = '';
+            
+            users.forEach((user, index) => {
+                const div = document.createElement('div');
+                div.className = `p-4 border rounded-lg user-color-${(index % 8) + 1}`;
+                
+                // User info section
+                const userInfo = document.createElement('div');
+                userInfo.className = 'flex items-center justify-between mb-3';
+                
+                const leftSection = document.createElement('div');
+                leftSection.className = 'flex-1';
+                
+                const nameElement = document.createElement('h4');
+                nameElement.className = 'font-semibold text-white text-lg';
+                nameElement.textContent = user.name;
+                
+                leftSection.appendChild(nameElement);
+                
+                // Only show code if current user is admin
+                if (currentUser && currentUser.isAdmin) {
+                    const codeElement = document.createElement('p');
+                    codeElement.className = 'text-white text-opacity-90';
+                    codeElement.textContent = `Kode: ${user.code}`;
+                    leftSection.appendChild(codeElement);
+                } else {
+                    const codeElement = document.createElement('p');
+                    codeElement.className = 'text-white text-opacity-70 text-sm';
+                    codeElement.textContent = 'Kode: ••••';
+                    leftSection.appendChild(codeElement);
+                }
+                
+                if (user.isAdmin) {
+                    const adminBadge = document.createElement('span');
+                    adminBadge.className = 'text-xs bg-white bg-opacity-30 px-2 py-1 rounded-full text-white block mt-1';
+                    adminBadge.textContent = 'Admin';
+                    leftSection.appendChild(adminBadge);
+                }
+                
+                userInfo.appendChild(leftSection);
+                
+                // Buttons section
+                const buttonsSection = document.createElement('div');
+                buttonsSection.className = 'flex gap-2';
+                
+                // Only show edit/delete buttons if current user is admin
+                if (currentUser && currentUser.isAdmin) {
+                    const editButton = document.createElement('button');
+                    editButton.className = 'text-white hover:text-yellow-200 text-lg';
+                    editButton.textContent = '✏️';
+                    editButton.onclick = () => editUser(user.id);
+                    buttonsSection.appendChild(editButton);
+                    
+                    if (!user.isAdmin) {
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'text-white hover:text-red-200 text-lg';
+                        deleteButton.textContent = '🗑️';
+                        deleteButton.onclick = () => deleteUser(user.id);
+                        buttonsSection.appendChild(deleteButton);
+                    }
+                }
+                
+                userInfo.appendChild(buttonsSection);
+                div.appendChild(userInfo);
+                
+                // Edit form (hidden by default)
+                const editForm = document.createElement('div');
+                editForm.id = `editForm-${user.id}`;
+                editForm.className = 'hidden bg-white bg-opacity-20 rounded p-3 space-y-2';
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.value = user.name;
+                nameInput.className = 'w-full px-3 py-2 border border-gray-300 rounded-lg';
+                nameInput.placeholder = 'Navn';
+                
+                const codeInput = document.createElement('input');
+                codeInput.type = 'text';
+                codeInput.value = user.code;
+                codeInput.className = 'w-full px-3 py-2 border border-gray-300 rounded-lg';
+                codeInput.placeholder = 'Kode (4 siffer)';
+                codeInput.maxLength = 4;
+                codeInput.pattern = '[0-9]{4}';
+                
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'flex gap-2';
+                
+                const saveButton = document.createElement('button');
+                saveButton.className = 'bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm';
+                saveButton.textContent = 'Lagre';
+                saveButton.onclick = () => saveUserEdit(user.id, nameInput.value, codeInput.value);
+                
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm';
+                cancelButton.textContent = 'Avbryt';
+                cancelButton.onclick = () => cancelUserEdit(user.id);
+                
+                buttonContainer.appendChild(saveButton);
+                buttonContainer.appendChild(cancelButton);
+                
+                editForm.appendChild(nameInput);
+                editForm.appendChild(codeInput);
+                editForm.appendChild(buttonContainer);
+                
+                div.appendChild(editForm);
+                list.appendChild(div);
+            });
+        }
+
+        function updateAllUserDropdowns() {
+            updateTaskAssigneeOptions();
+            updateActivityAssigneeOptions();
+            updateYearlyEventAssigneeOptions();
+        }
+
+        function updateTaskAssigneeOptions() {
+            const container = document.getElementById('taskAssigneeCheckboxes');
+            if (container) {
+                container.innerHTML = '';
+                users.forEach((user, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-2';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `assignee-${user.id}`;
+                    checkbox.value = user.id;
+                    checkbox.className = 'w-4 h-4 text-green-600 rounded';
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `assignee-${user.id}`;
+                    label.className = `flex-1 text-sm cursor-pointer px-2 py-1 rounded user-color-${(index % 8) + 1} text-white`;
+                    label.textContent = user.name;
+                    
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        function updateActivityAssigneeOptions() {
+            const select = document.getElementById('activityAssignee');
+            if (select) {
+                select.innerHTML = '<option value="">Tildel til...</option>';
+                users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = user.name;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function updateYearlyEventAssigneeOptions() {
+            const container = document.getElementById('yearlyEventAssigneeCheckboxes');
+            if (container) {
+                container.innerHTML = '';
+                users.forEach((user, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-2';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `yearlyAssignee-${user.id}`;
+                    checkbox.value = user.id;
+                    checkbox.className = 'w-4 h-4 text-indigo-600 rounded';
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `yearlyAssignee-${user.id}`;
+                    label.className = `flex-1 text-sm cursor-pointer px-2 py-1 rounded user-color-${(index % 8) + 1} text-white`;
+                    label.textContent = user.name;
+                    
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // Enhanced task functions
+        function addTask() {
+            const taskText = document.getElementById('newTask').value.trim();
+            const daySelect = document.getElementById('taskDay');
+            const reminderSelect = document.getElementById('taskReminder');
+            
+            const selectedAssignees = [];
+            const checkboxes = document.querySelectorAll('#taskAssigneeCheckboxes input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedAssignees.push(parseInt(checkbox.value));
+            });
+            
+            const selectedDay = daySelect.value;
+            const reminderDays = reminderSelect.value ? parseInt(reminderSelect.value) : null;
+            
+            if (taskText && selectedAssignees.length > 0 && selectedDay) {
+                const task = {
+                    id: Date.now(),
+                    text: taskText,
+                    assignedTo: selectedAssignees,
+                    day: selectedDay,
+                    completed: false,
+                    createdBy: currentUser.id,
+                    createdAt: new Date(),
+                    reminderDays: reminderDays
+                };
+                
+                tasks.push(task);
+                
+                document.getElementById('newTask').value = '';
+                daySelect.value = '';
+                reminderSelect.value = '';
+                
+                // Uncheck all checkboxes
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                renderTaskList();
+                saveData();
+            } else {
+                alert('Vennligst fyll ut alle feltene (oppgave, personer og dag)');
+            }
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(task => task.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                renderTaskList();
+                saveData();
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('Er du sikker på at du vil slette denne oppgaven?')) {
+                tasks = tasks.filter(task => task.id !== id);
+                renderTaskList();
+                saveData();
+            }
+        }
+
+        function renderTaskList() {
+            const list = document.getElementById('taskList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            const dayNames = {
+                monday: 'Man', tuesday: 'Tir', wednesday: 'Ons',
+                thursday: 'Tor', friday: 'Fre', saturday: 'Lør', sunday: 'Søn'
+            };
+            
+            tasks.forEach(task => {
+                const div = document.createElement('div');
+                div.className = `p-4 border rounded-lg ${task.completed ? 'bg-gray-50 opacity-60' : 'bg-white'} shadow-sm`;
+                
+                const assignedUsers = task.assignedTo.map(userId => {
+                    const user = users.find(u => u.id === userId);
+                    return user ? user.name : 'Ukjent';
+                }).join(', ');
+                
+                const assignedDay = dayNames[task.day];
+                
+                div.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTask(${task.id})"
+                               class="w-5 h-5 text-green-600 rounded mt-1">
+                        <div class="flex-1">
+                            <p class="${task.completed ? 'line-through text-gray-500' : 'text-gray-800'} font-medium mb-2">
+                                ${task.text}
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                    👥 ${assignedUsers}
+                                </span>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                    📅 ${assignedDay}
+                                </span>
+                                ${task.reminderDays ? `<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">🔔 ${task.reminderDays}d før</span>` : ''}
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                Opprettet av ${users.find(u => u.id === task.createdBy)?.name || 'Ukjent'}
+                            </div>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" 
+                                class="text-red-500 hover:text-red-700">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+                
+                list.appendChild(div);
+            });
+            
+            if (tasks.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'text-center text-gray-500 py-8';
+                emptyDiv.textContent = 'Ingen oppgaver lagt til ennå';
+                list.appendChild(emptyDiv);
+            }
+        }
+
+        // Week overview functions
+        function changeWeek(direction) {
+            currentWeekOffset += direction;
+            renderWeekOverview();
+        }
+
+        function getWeekDates(offset = 0) {
+            const today = new Date();
+            const currentDay = today.getDay();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - currentDay + 1 + (offset * 7));
+            
+            const weekDates = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(monday);
+                date.setDate(monday.getDate() + i);
+                weekDates.push(date);
+            }
+            return weekDates;
+        }
+
+        function renderWeekOverview() {
+            const weekDates = getWeekDates(currentWeekOffset);
+            const weekTitle = document.getElementById('weekTitle');
+            const weekOverview = document.getElementById('weekOverview');
+            
+            if (!weekTitle || !weekOverview) return;
+            
+            // Update week title
+            const startDate = weekDates[0];
+            const endDate = weekDates[6];
+            const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 
+                              'juli', 'august', 'september', 'oktober', 'november', 'desember'];
+
+            weekTitle.textContent = `Uke ${getWeekNumber(startDate)} - ${startDate.getDate()}. ${monthNames[startDate.getMonth()]} til ${endDate.getDate()}. ${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}`;
+            
+            // Clear previous content
+            weekOverview.innerHTML = '';
+            
+            // Create overview for each user
+            users.forEach((user, userIndex) => {
+                const userCard = document.createElement('div');
+                userCard.className = `bg-white rounded-lg border-2 border-gray-100 p-4 user-color-${(userIndex % 8) + 1}`;
+                
+                const userHeader = document.createElement('h3');
+                userHeader.className = 'text-lg font-bold mb-4 text-gray-800 bg-white bg-opacity-90 rounded-lg px-3 py-2';
+                userHeader.textContent = user.name;
+                userCard.appendChild(userHeader);
+                
+                // Create day columns
+                const daysContainer = document.createElement('div');
+                daysContainer.className = 'grid grid-cols-7 gap-2';
+                
+                const dayNames = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'];
+                
+                weekDates.forEach((date, dayIndex) => {
+                    const dayColumn = document.createElement('div');
+                    dayColumn.className = 'bg-white bg-opacity-50 rounded p-2 min-h-[120px]';
+                    
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'font-semibold text-sm mb-2 text-center';
+                    dayHeader.textContent = `${dayNames[dayIndex]} ${date.getDate()}/${date.getMonth() + 1}`;
+                    dayColumn.appendChild(dayHeader);
+                    
+                    const eventsContainer = document.createElement('div');
+                    eventsContainer.className = 'space-y-1';
+                    
+                    // Add activities for this day and user
+                    const dayActivities = getActivitiesForDay(date, user.id);
+                    dayActivities.forEach(activity => {
+                        const activityDiv = document.createElement('div');
+                        activityDiv.className = 'text-xs bg-white bg-opacity-70 rounded px-2 py-1';
+                        activityDiv.textContent = activity.time ? `${activity.time} ${activity.name}` : activity.name;
+                        eventsContainer.appendChild(activityDiv);
+                    });
+                    
+                    // Add tasks for this user and day
+                    const dayTasks = getTasksForDay(date, user.id);
+                    dayTasks.forEach(task => {
+                        const taskDiv = document.createElement('div');
+                        taskDiv.className = 'text-xs bg-yellow-100 rounded px-2 py-1';
+                        taskDiv.textContent = `📋 ${task.text}`;
+                        eventsContainer.appendChild(taskDiv);
+                    });
+
+                    // Add yearly events for this day and user
+                    const yearlyEventsForDay = getYearlyEventsForDay(date, user.id);
+                    yearlyEventsForDay.forEach(event => {
+                        const eventDiv = document.createElement('div');
+                        eventDiv.className = 'text-xs bg-pink-100 rounded px-2 py-1';
+                        eventDiv.textContent = `🎉 ${event.name}`;
+                        eventsContainer.appendChild(eventDiv);
+                    });
+                    
+                    dayColumn.appendChild(eventsContainer);
+                    daysContainer.appendChild(dayColumn);
+                });
+                
+                userCard.appendChild(daysContainer);
+                weekOverview.appendChild(userCard);
+            });
+        }
+
+        function getTasksForDay(date, userId) {
+            const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()];
+            
+            return tasks.filter(task => {
+                return task.assignedTo.includes(userId) && 
+                       task.day === dayName && 
+                       !task.completed;
+            });
+        }
+
+        function getActivitiesForDay(date, userId) {
+            const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()];
+            
+            return activities.filter(activity => {
+                if (activity.assignedTo !== userId) return false;
+                
+                if (activity.type === 'weekly' && activity.day === dayName) {
+                    return true;
+                }
+                
+                return false;
+            });
+        }
+
+        function getYearlyEventsForDay(date, userId = null) {
+            return yearlyEvents.filter(event => {
+                const matchesDate = event.month === date.getMonth() && event.day === date.getDate();
+                
+                if (userId === null) {
+                    return matchesDate;
+                }
+                
+                // Show event if it's assigned to this user, or if it's not assigned to anyone
+                if (Array.isArray(event.assignedTo)) {
+                    return matchesDate && (event.assignedTo.includes(userId) || event.assignedTo.length === 0);
+                } else {
+                    return matchesDate && (event.assignedTo === userId || event.assignedTo === null);
+                }
+            });
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+        }
+
+        // Shopping list functions
+        function addShoppingItem() {
+            const input = document.getElementById('newShoppingItem');
+            const item = input.value.trim();
+            
+            if (item) {
+                const shoppingItem = {
+                    id: Date.now(),
+                    text: item,
+                    completed: false,
+                    addedBy: currentUser.id
+                };
+                
+                shoppingItems.push(shoppingItem);
+                input.value = '';
+                renderShoppingList();
+                saveData();
+            }
+        }
+
+        function toggleShoppingItem(id) {
+            const item = shoppingItems.find(item => item.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                renderShoppingList();
+                saveData();
+            }
+        }
+
+        function deleteShoppingItem(id) {
+            shoppingItems = shoppingItems.filter(item => item.id !== id);
+            renderShoppingList();
+            saveData();
+        }
+
+        function renderShoppingList() {
+            const list = document.getElementById('shoppingList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            shoppingItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `flex items-center gap-3 p-3 border rounded-lg ${item.completed ? 'bg-gray-50 opacity-60' : 'bg-white'}`;
+                
+                const user = users.find(u => u.id === item.addedBy);
+                
+                div.innerHTML = `
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                           onchange="toggleShoppingItem(${item.id})"
+                           class="w-4 h-4 text-blue-600 rounded">
+                    <span class="${item.completed ? 'line-through text-gray-500' : 'text-gray-800'} flex-1">
+                        ${item.text}
+                    </span>
+                    <span class="text-xs px-2 py-1 rounded-full user-color-${(index % 8) + 1} text-white">
+                        ${user ? user.name : 'Ukjent'}
+                    </span>
+                    <button onclick="deleteShoppingItem(${item.id})" 
+                            class="text-red-500 hover:text-red-700 text-sm">
+                        🗑️
+                    </button>
+                `;
+                
+                list.appendChild(div);
+            });
+        }
+
+        // Activity functions
+        function addActivity() {
+            const name = document.getElementById('activityName').value.trim();
+            const assigneeSelect = document.getElementById('activityAssignee');
+            const reminderSelect = document.getElementById('activityReminder');
+            const type = document.getElementById('activityType').value;
+            const day = document.getElementById('activityDay').value;
+            const time = document.getElementById('activityTime').value;
+            const assignee = assigneeSelect.value;
+            const reminderDays = reminderSelect.value ? parseInt(reminderSelect.value) : null;
+            
+            if (name) {
+                const activity = {
+                    id: Date.now(),
+                    name: name,
+                    type: type,
+                    day: day,
+                    time: time,
+                    assignedTo: assignee !== '' ? parseInt(assignee) : null,
+                    createdBy: currentUser.id,
+                    reminderDays: reminderDays
+                };
+                
+                activities.push(activity);
+                
+                document.getElementById('activityName').value = '';
+                document.getElementById('activityTime').value = '';
+                assigneeSelect.value = '';
+                reminderSelect.value = '';
+                
+                renderActivityList();
+                saveData();
+            }
+        }
+
+        function deleteActivity(id) {
+            activities = activities.filter(activity => activity.id !== id);
+            renderActivityList();
+            saveData();
+        }
+
+        function renderActivityList() {
+            const list = document.getElementById('activityList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            const dayNames = {
+                monday: 'Mandag', tuesday: 'Tirsdag', wednesday: 'Onsdag',
+                thursday: 'Torsdag', friday: 'Fredag', saturday: 'Lørdag', sunday: 'Søndag'
+            };
+            
+            const typeNames = {
+                weekly: 'Ukentlig', monthly: 'Månedlig', yearly: 'Årlig', custom: 'Egendefinert'
+            };
+
+            activities.forEach(activity => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-4 border rounded-lg bg-white';
+                
+                const assignedUser = users.find(u => u.id === activity.assignedTo);
+                const createdUser = users.find(u => u.id === activity.createdBy);
+                
+                div.innerHTML = `
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-800">${activity.name}</h4>
+                        <p class="text-sm text-gray-600">
+                            ${typeNames[activity.type]} - ${dayNames[activity.day]} 
+                            ${activity.time ? `kl. ${activity.time}` : ''}
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="text-xs text-white px-2 py-1 rounded-full user-color-${(activity.createdBy % 8) + 1}">
+                                Opprettet av ${createdUser ? createdUser.name : 'Ukjent'}
+                            </span>
+                            <span class="text-xs text-white px-2 py-1 rounded-full ${assignedUser ? `user-color-${(activity.assignedTo % 8) + 1}` : 'bg-gray-400'}">
+                                ${assignedUser ? assignedUser.name : 'Ikke tildelt'}
+                            </span>
+                            ${activity.reminderDays ? `<span class="text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full">🔔 ${activity.reminderDays}d før</span>` : ''}
+                        </div>
+                    </div>
+                    <button onclick="deleteActivity(${activity.id})" 
+                            class="text-red-500 hover:text-red-700 ml-4">
+                        🗑️
+                    </button>
+                `;
+                
+                list.appendChild(div);
+            });
+        }
+
+        // Yearly events functions
+        function addYearlyEvent() {
+            const name = document.getElementById('yearlyEventName').value.trim();
+            const month = document.getElementById('yearlyEventMonth').value;
+            const day = document.getElementById('yearlyEventDay').value;
+            const reminderSelect = document.getElementById('yearlyEventReminder');
+            
+            const selectedAssignees = [];
+            const checkboxes = document.querySelectorAll('#yearlyEventAssigneeCheckboxes input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedAssignees.push(parseInt(checkbox.value));
+            });
+            
+            const reminderDays = reminderSelect.value ? parseInt(reminderSelect.value) : null;
+            
+            if (name && month !== '' && day) {
+                const event = {
+                    id: Date.now(),
+                    name: name,
+                    month: parseInt(month),
+                    day: parseInt(day),
+                    assignedTo: selectedAssignees.length > 0 ? selectedAssignees : null,
+                    createdBy: currentUser.id,
+                    reminderDays: reminderDays
+                };
+                
+                yearlyEvents.push(event);
+                
+                document.getElementById('yearlyEventName').value = '';
+                document.getElementById('yearlyEventMonth').value = '';
+                document.getElementById('yearlyEventDay').value = '';
+                reminderSelect.value = '';
+                
+                // Uncheck all checkboxes
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                renderYearlyEvents();
+                saveData();
+            }
+        }
+
+        function deleteYearlyEvent(id) {
+            yearlyEvents = yearlyEvents.filter(event => event.id !== id);
+            renderYearlyEvents();
+            saveData();
+        }
+
+        function renderYearlyEvents() {
+            for (let i = 0; i < 12; i++) {
+                const monthContainer = document.getElementById(`month-${i}`);
+                if (monthContainer) {
+                    monthContainer.innerHTML = '';
+                }
+            }
+            
+            const sortedEvents = [...yearlyEvents].sort((a, b) => a.day - b.day);
+            
+            sortedEvents.forEach(event => {
+                const monthContainer = document.getElementById(`month-${event.month}`);
+                if (monthContainer) {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between p-2 bg-white rounded border text-sm';
+                    
+                    const createdUser = users.find(u => u.id === event.createdBy);
+                    
+                    const eventContent = document.createElement('div');
+                    eventContent.className = 'flex-1';
+                    
+                    const eventTitle = document.createElement('div');
+                    eventTitle.className = 'font-medium';
+                    eventTitle.textContent = `${event.day}. ${event.name}`;
+                    eventContent.appendChild(eventTitle);
+                    
+                    const badgesContainer = document.createElement('div');
+                    badgesContainer.className = 'flex flex-wrap gap-1 mt-1';
+                    
+                    // Handle multiple assignees
+                    if (event.assignedTo && Array.isArray(event.assignedTo) && event.assignedTo.length > 0) {
+                        event.assignedTo.forEach(userId => {
+                            const assignedUser = users.find(u => u.id === userId);
+                            if (assignedUser) {
+                                const assignedBadge = document.createElement('span');
+                                assignedBadge.className = `text-xs text-white px-2 py-1 rounded-full user-color-${(userId % 8) + 1}`;
+                                assignedBadge.textContent = assignedUser.name;
+                                badgesContainer.appendChild(assignedBadge);
+                            }
+                        });
+                    } else if (event.assignedTo && !Array.isArray(event.assignedTo)) {
+                        // Handle old single assignee format
+                        const assignedUser = users.find(u => u.id === event.assignedTo);
+                        if (assignedUser) {
+                            const assignedBadge = document.createElement('span');
+                            assignedBadge.className = `text-xs text-white px-2 py-1 rounded-full user-color-${(event.assignedTo % 8) + 1}`;
+                            assignedBadge.textContent = assignedUser.name;
+                            badgesContainer.appendChild(assignedBadge);
+                        }
+                    }
+                    
+                    // Add reminder badge if set
+                    if (event.reminderDays) {
+                        const reminderBadge = document.createElement('span');
+                        reminderBadge.className = 'text-xs bg-yellow-400 text-yellow-800 px-2 py-1 rounded-full';
+                        reminderBadge.textContent = `🔔 ${event.reminderDays}d før`;
+                        badgesContainer.appendChild(reminderBadge);
+                    }
+                    
+                    const createdBadge = document.createElement('span');
+                    createdBadge.className = `text-xs bg-gray-400 text-white px-2 py-1 rounded-full`;
+                    createdBadge.textContent = `Av: ${createdUser ? createdUser.name : 'Ukjent'}`;
+                    badgesContainer.appendChild(createdBadge);
+                    
+                    eventContent.appendChild(badgesContainer);
+                    div.appendChild(eventContent);
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'text-red-500 hover:text-red-700 ml-2';
+                    deleteButton.textContent = '🗑️';
+                    deleteButton.onclick = () => deleteYearlyEvent(event.id);
+                    div.appendChild(deleteButton);
+                    
+                    monthContainer.appendChild(div);
+                }
+            });
+        }
+
+        // Meal plan functions
+        function saveMealPlan() {
+            const mealInputs = document.querySelectorAll('.day-menu input');
+            const mealPlan = {};
+            const days = ['mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag', 'søndag'];
+            
+            mealInputs.forEach((input, index) => {
+                mealPlan[days[index]] = input.value;
+            });
+            
+            localStorage.setItem('mealPlan', JSON.stringify(mealPlan));
+        }
+
+        function loadMealPlan() {
+            const saved = localStorage.getItem('mealPlan');
+            if (saved) {
+                const mealPlan = JSON.parse(saved);
+                const mealInputs = document.querySelectorAll('.day-menu input');
+                const days = ['mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag', 'søndag'];
+                
+                mealInputs.forEach((input, index) => {
+                    if (input) {
+                        input.value = mealPlan[days[index]] || '';
+                    }
+                });
+            }
+        }
+
+        // Meal suggestions functions
+        function addMealSuggestion() {
+            const name = document.getElementById('mealSuggestionName').value.trim();
+            const category = document.getElementById('mealCategory').value;
+            const time = document.getElementById('mealTime').value;
+            const ingredients = document.getElementById('mealIngredients').value.trim();
+            
+            if (name) {
+                const mealSuggestion = {
+                    id: Date.now(),
+                    name: name,
+                    category: category || 'annet',
+                    time: time ? parseInt(time) : null,
+                    ingredients: ingredients,
+                    createdBy: currentUser.id
+                };
+                
+                mealSuggestions.push(mealSuggestion);
+                
+                document.getElementById('mealSuggestionName').value = '';
+                document.getElementById('mealCategory').value = '';
+                document.getElementById('mealTime').value = '';
+                document.getElementById('mealIngredients').value = '';
+                
+                renderMealSuggestions();
+                saveData();
+            }
+        }
+
+        function deleteMealSuggestion(id) {
+            mealSuggestions = mealSuggestions.filter(meal => meal.id !== id);
+            renderMealSuggestions();
+            saveData();
+        }
+
+        function filterMeals(category) {
+            currentMealFilter = category;
+            
+            // Update filter button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-200', 'text-orange-800');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-orange-200', 'text-orange-800');
+            
+            renderMealSuggestions();
+        }
+
+        function renderMealSuggestions() {
+            const list = document.getElementById('mealSuggestionsList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            const categoryNames = {
+                pasta: 'Pasta',
+                kjoett: 'Kjøtt',
+                fisk: 'Fisk',
+                vegetar: 'Vegetar',
+                suppe: 'Suppe',
+                pizza: 'Pizza',
+                salat: 'Salat',
+                annet: 'Annet'
+            };
+
+            const categoryEmojis = {
+                pasta: '🍝',
+                kjoett: '🥩',
+                fisk: '🐟',
+                vegetar: '🥬',
+                suppe: '🍲',
+                pizza: '🍕',
+                salat: '🥗',
+                annet: '🍽️'
+            };
+            
+            const filteredMeals = currentMealFilter === 'all' 
+                ? mealSuggestions 
+                : mealSuggestions.filter(meal => meal.category === currentMealFilter);
+            
+            filteredMeals.forEach(meal => {
+                const div = document.createElement('div');
+                div.className = 'bg-orange-50 border border-orange-200 rounded-lg p-4 hover:shadow-md transition-shadow';
+                
+                const createdUser = users.find(u => u.id === meal.createdBy);
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                            ${categoryEmojis[meal.category] || '🍽️'} ${meal.name}
+                        </h4>
+                        <button onclick="deleteMealSuggestion(${meal.id})" 
+                                class="text-red-500 hover:text-red-700 text-sm">
+                            🗑️
+                        </button>
+                    </div>
+                    <div class="flex gap-2 mb-2">
+                        <span class="text-xs bg-orange-200 text-orange-800 px-2 py-1 rounded-full">
+                            ${categoryNames[meal.category] || 'Annet'}
+                        </span>
+                        ${meal.time ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">⏱️ ${meal.time} min</span>` : ''}
+                    </div>
+                    ${meal.ingredients ? `
+                        <div class="text-sm text-gray-600 mb-2">
+                            <strong>Ingredienser:</strong><br>
+                            ${meal.ingredients.replace(/\n/g, '<br>')}
+                        </div>
+                    ` : ''}
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-white px-2 py-1 rounded-full user-color-${(meal.createdBy % 8) + 1}">
+                            ${createdUser ? createdUser.name : 'Ukjent'}
+                        </span>
+                        <button onclick="copyToMealPlan('${meal.name}')" 
+                                class="text-xs bg-green-200 text-green-800 px-3 py-1 rounded-full hover:bg-green-300">
+                            📋 Kopier til meny
+                        </button>
+                    </div>
+                `;
+                
+                list.appendChild(div);
+            });
+            
+            if (filteredMeals.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'col-span-full text-center text-gray-500 py-8';
+                emptyDiv.textContent = currentMealFilter === 'all' 
+                    ? 'Ingen middagsforslag lagt til ennå' 
+                    : `Ingen ${categoryNames[currentMealFilter].toLowerCase()}-retter funnet`;
+                list.appendChild(emptyDiv);
+            }
+        }
+
+        function copyToMealPlan(mealName) {
+            alert(`"${mealName}" er kopiert! Gå til Ukesmeny for å lime inn på ønsket dag.`);
+        }
+
+        // Data persistence
+        function saveData() {
+            const data = {
+                users: users,
+                shoppingItems: shoppingItems,
+                tasks: tasks,
+                activities: activities,
+                yearlyEvents: yearlyEvents,
+                mealSuggestions: mealSuggestions
+            };
+            localStorage.setItem('famPlan', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('famPlan');
+            if (saved) {
+                const data = JSON.parse(saved);
+                users = data.users || [];
+                shoppingItems = data.shoppingItems || [];
+                tasks = data.tasks || [];
+                activities = data.activities || [];
+                yearlyEvents = data.yearlyEvents || [];
+                mealSuggestions = data.mealSuggestions || [];
+            }
+            
+            loadMealPlan();
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9894fd8972390b31',t:'MTc1OTU4NDE3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
